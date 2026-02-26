@@ -1,0 +1,1 @@
+let lootList = []; // Set up the loot list array.

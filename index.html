@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Eik Ulfsson">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/script.js"></script>
+    <title>Dungeon Loot Splitter</title>
+</head>
+
+<body>
+    <header>
+        <h1>Dungeon Loot Splitter</h1>
+    </header>
+
+    <main>
+        <section class="panel">
+            <h2>Party Setup</h2>
+            How many are in the party?<br>
+            <br>
+            <input type="number" value="1" min="1">
+        </section>
+
+        <section class="panel">
+            <h2>Add Loot</h2>
+            <table>
+                <tr>
+                    <td>
+                        <label for="lootname">Name:</label><br>
+                        <input id="lootname" placeholder="Name of Object"> 
+                    </td>
+                    <td>
+                        <label for="lootvalue">Value:</label><br>
+                        <input id="lootvalue" type="number" min="0" step="0.01" value="0.00">
+                    </td>
+                </tr>
+            </table>
+            <button>Add Loot</button>
+        </section>
+
+        <section class="panel">
+            <h2>Loot List</h2>
+            <table class="loot-list-table">
+                <tr>
+                    <th>
+                        Item Name
+                    </th>
+
+                    <th>
+                        Item Value
+                    </th>
+                </tr>
+
+                <tr>
+                    <td>
+                        Round Pantaloons
+                    </td>
+                    <td>
+                        3.14
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="panel">
+            <h2>Split Loot</h2>
+        </section>
+        
+        <hr>
+
+        <section class="panel reflection">
+            <h2>Logic Explanation</h2>
+        </section>
+
+        <!-- <section class="panel">
+            <h2>Second Left</h2>
+        </section>
+
+        <section class="panel">
+            <h2>Second Right</h2>
+        </section>
+
+        <section class="panel">
+            <h2>Third Left</h2>
+        </section>
+
+        <section class="panel">
+            <h2>Third Right</h2>
+        </section>
+
+        <section class="panel reflection">
+            <h2>Bottom</h2>
+        </section> -->
+    </main>
+</body>
+
+</html>
