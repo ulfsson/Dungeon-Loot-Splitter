@@ -25,18 +25,21 @@
 
         <section class="panel">
             <h2>Add Loot</h2>
-            <table>
-                <tr>
-                    <td>
-                        <label for="lootname">Name:</label><br>
-                        <input id="lootname" placeholder="Name of Object"> 
-                    </td>
-                    <td>
-                        <label for="lootvalue">Value:</label><br>
-                        <input id="lootvalue" type="number" min="0" step="0.01" value="0.00">
-                    </td>
-                </tr>
-            </table>
+            <label for="lootname">Name:</label><br>
+            <input id="lootname" placeholder="Name of Object"><br>
+            <br>
+            <label for="lootvalue">Base Value:</label><br>
+            <input id="lootvalue" type="number" min="0" step="0.01" value="0.00"><br>
+            <br>
+            Quality (aka Rarity; internal value adjustment):<br>
+            <quality-picker aria-label="Loot quality picker." role="radiogroup">
+                <label><input type="radio" name="lootquality" id="quality-poor">Poor</label>
+                <label><input type="radio" name="lootquality" id="quality-common" checked>Common</label>
+                <label><input type="radio" name="lootquality" id="quality-uncommon">Uncommon</label>
+                <label><input type="radio" name="lootquality" id="quality-rare">Rare</label>
+                <label><input type="radio" name="lootquality" id="quality-epic">Epic</label>
+            </quality-picker>
+            <br><br>
             <button>Add Loot</button>
         </section>
 
@@ -49,13 +52,27 @@
                     </th>
 
                     <th>
-                        Item Value
+                        Quality
+                    </th>
+                    
+                    <th>
+                        Base Value
+                    </th>
+                    
+                    <th>
+                        Quality Value
                     </th>
                 </tr>
 
                 <tr>
                     <td>
                         Round Pantaloons
+                    </td>
+                    <td>
+                        Common
+                    </td>
+                    <td>
+                        3.14
                     </td>
                     <td>
                         3.14
@@ -67,7 +84,7 @@
         <section class="panel">
             <h2>Split Loot</h2>
         </section>
-        
+
         <hr>
 
         <section class="panel reflection">
