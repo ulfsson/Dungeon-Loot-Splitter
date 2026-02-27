@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Eik Ulfsson">
     <link rel="stylesheet" href="./css/style.css">
-    <script src="./js/script.js"></script>
     <title>Dungeon Loot Splitter</title>
 </head>
 
@@ -25,28 +24,30 @@
 
         <section class="panel">
             <h2>Add Loot</h2>
-            <label for="lootname">Name:</label><br>
-            <input id="lootname" placeholder="Name of Object"><br>
-            <br>
-            <label for="lootvalue">Base Value:</label><br>
-            <input id="lootvalue" type="number" min="0" step="0.01" value="0.00"><br>
-            <br>
-            Quality (aka Rarity; internal value adjustment):<br>
-            <quality-picker aria-label="Loot quality picker." role="radiogroup">
-                <label><input type="radio" name="lootquality" id="quality-poor">Poor</label>
-                <label><input type="radio" name="lootquality" id="quality-common" checked>Common</label>
-                <label><input type="radio" name="lootquality" id="quality-uncommon">Uncommon</label>
-                <label><input type="radio" name="lootquality" id="quality-rare">Rare</label>
-                <label><input type="radio" name="lootquality" id="quality-epic">Epic</label>
-            </quality-picker>
-            <br><br>
-            <button>Add Loot</button>
+            <form id="lootForm" name="lootForm">
+                <label for="lootname">Name:</label><br>
+                <input id="lootname" placeholder="Name of Item"><br>
+                <br>
+                <label for="lootvalue">Base Value:</label><br>
+                <input id="lootvalue" type="number" min="0" step="0.01" value="0.00"><br>
+                <br>
+                Quality (aka Rarity; internal value adjustment):<br>
+                <quality-picker aria-label="Loot quality picker." role="radiogroup">
+                    <label><input type="radio" name="lootquality" id="quality-poor" value="0">Poor</label>
+                    <label><input type="radio" name="lootquality" id="quality-common" value="1" checked>Common</label>
+                    <label><input type="radio" name="lootquality" id="quality-uncommon" value="2">Uncommon</label>
+                    <label><input type="radio" name="lootquality" id="quality-rare" value="3">Rare</label>
+                    <label><input type="radio" name="lootquality" id="quality-epic" value="4">Epic</label>
+                </quality-picker>
+                <br><br>
+            </form>
+            <button id="addLootButton" value="addLoot">Add Loot</button>
         </section>
 
         <section class="panel">
             <h2>Loot List</h2>
-            <table class="loot-list-table">
-                <tr>
+            <table class="loot-list-table" id="lootTable">
+                <!-- <tr>
                     <th>
                         Item Name
                     </th>
@@ -77,7 +78,7 @@
                     <td>
                         3.14
                     </td>
-                </tr>
+                </tr> -->
             </table>
         </section>
 
@@ -91,6 +92,7 @@
             <h2>Logic Explanation</h2>
         </section>
     </main>
+    <script src="./js/script.js"></script>
 </body>
 
 </html>

@@ -45,8 +45,9 @@ main hr {
 }
 
 .loot-list-table {
-    width: 100%;
     border: 1px solid white;
+    display: none;
+    width: 100%;
 }
 
 .loot-list-table th {
@@ -55,6 +56,12 @@ main hr {
 
 .loot-list-table td {
     text-align: center;
+}
+
+.removeFromLootButton {
+    border: 1px solid white;
+    padding: 3px;
+    cursor: pointer;
 }
 
 quality-picker label {
