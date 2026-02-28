@@ -29,7 +29,7 @@
                 <input id="lootname" placeholder="Name of Item"><br>
                 <br>
                 <label for="lootvalue">Base Value:</label><br>
-                <input id="lootvalue" type="number" min="0" step="0.01" value="0.00"><br>
+                <input id="lootvalue" type="number" min="0" step="0.01" value="3.14"><br>
                 <br>
                 Quality (aka Rarity; internal value adjustment):<br>
                 <quality-picker aria-label="Loot quality picker." role="radiogroup">
@@ -47,43 +47,14 @@
         <section class="panel">
             <h2>Loot List</h2>
             <table class="loot-list-table" id="lootTable">
-                <!-- <tr>
-                    <th>
-                        Item Name
-                    </th>
-
-                    <th>
-                        Quality
-                    </th>
-                    
-                    <th>
-                        Base Value
-                    </th>
-                    
-                    <th>
-                        Quality Value
-                    </th>
-                </tr>
-
-                <tr>
-                    <td>
-                        Round Pantaloons
-                    </td>
-                    <td>
-                        Common
-                    </td>
-                    <td>
-                        3.14
-                    </td>
-                    <td>
-                        3.14
-                    </td>
-                </tr> -->
             </table>
         </section>
 
         <section class="panel">
             <h2>Split Loot</h2>
+            <button id="splitLootButton">Split Loot</button>
+            <table id="lootSplitTable">
+            </table>
         </section>
 
         <hr>

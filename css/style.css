@@ -88,6 +88,12 @@ quality-picker label input {
     pointer-events: none;
 }
 
+#lootSplitTable {
+    border: 1px solid white;
+    display: none;
+    width: 100%;
+}
+
 @media (min-width: 768px) {
     main {
         display: grid;
