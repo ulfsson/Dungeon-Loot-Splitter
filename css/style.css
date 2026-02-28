@@ -45,8 +45,9 @@ main hr {
 }
 
 .loot-list-table {
-    width: 100%;
     border: 1px solid white;
+    display: none;
+    width: 100%;
 }
 
 .loot-list-table th {
@@ -56,6 +57,60 @@ main hr {
 .loot-list-table td {
     text-align: center;
 }
+
+.removeFromLootButton {
+    border: 1px solid white;
+    padding: 3px;
+    cursor: pointer;
+}
+
+quality-picker label {
+    padding: 10px;
+    cursor: pointer;
+    background: #303030;
+    border-radius: 5px;
+    border: 1px solid black;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+quality-picker label:has(input:checked) {
+    box-shadow: 0px 0px 3px 1px inset #99F;
+}
+
+quality-picker label:has(input:focus-visible) {
+    outline: 2px solid white;
+}
+
+quality-picker label input {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+#lootSplitTable {
+    border: 1px solid white;
+    border-collapse: collapse;
+    display: none;
+    width: 100%;
+}
+
+#lootSplitTable tr {
+    border-bottom: 1px solid white;
+}
+
+#lootSplitTable td.which-player {
+    text-align: left;
+    font-weight: bold;
+    padding: 5px;
+    padding-left: 20px;
+    background-color: rgb(0, 0, 56);
+}
+
+#lootSplitTable tr.loot-info td {
+    text-align: center;
+}
+
 
 @media (min-width: 768px) {
     main {
