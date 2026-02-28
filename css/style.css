@@ -90,9 +90,27 @@ quality-picker label input {
 
 #lootSplitTable {
     border: 1px solid white;
+    border-collapse: collapse;
     display: none;
     width: 100%;
 }
+
+#lootSplitTable tr {
+    border-bottom: 1px solid white;
+}
+
+#lootSplitTable td.which-player {
+    text-align: left;
+    font-weight: bold;
+    padding: 5px;
+    padding-left: 20px;
+    background-color: rgb(0, 0, 56);
+}
+
+#lootSplitTable tr.loot-info td {
+    text-align: center;
+}
+
 
 @media (min-width: 768px) {
     main {
