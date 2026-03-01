@@ -15,55 +15,69 @@
     </header>
 
     <main>
-        <section class="panel">
-            <h2>Party Setup</h2>
-            How many are in the party?<br>
-            <br>
-            <input type="number" id="partyNumber" value="1" min="1"><br>
-            <br>
-            <span id="invalid-party-size-message">Party size must be an integer of at least 1.</span>
-        </section>
-
-        <section class="panel">
-            <h2>Add Loot</h2>
-            <form id="lootForm" name="lootForm">
-                <label for="lootname">Name:</label><br>
-                <input id="lootname" placeholder="Name of Item"><br>
+        <article>
+            <header>
+                <span class="closebutton">X</span>
+                <span>Party Setup</span>
+            </header>
+            <section class="inner-panel">
+                How many are in the party?<br>
                 <br>
-                <label for="lootvalue">Base Value:</label><br>
-                <input id="lootvalue" type="number" min="0" step="0.01" value="3.14"><br>
+                <input type="number" id="partyNumber" value="1" min="1"><br>
                 <br>
-                Quality (aka Rarity; internal value adjustment):<br>
-                <quality-picker aria-label="Loot quality picker." role="radiogroup">
-                    <label><input type="radio" name="lootquality" id="quality-poor" value="0">Poor</label>
-                    <label><input type="radio" name="lootquality" id="quality-common" value="1" checked>Common</label>
-                    <label><input type="radio" name="lootquality" id="quality-uncommon" value="2">Uncommon</label>
-                    <label><input type="radio" name="lootquality" id="quality-rare" value="3">Rare</label>
-                    <label><input type="radio" name="lootquality" id="quality-epic" value="4">Epic</label>
-                </quality-picker>
-                <br><br>
-            </form>
-            <button id="addLootButton" value="addLoot">Add Loot</button>
-        </section>
-
-        <section class="panel">
-            <h2>Loot List</h2>
-            <h3 id="no-loot-message">No loot to display. Add something using the Add Loot form.</h3>
-            <table class="loot-list-table" id="lootTable">
-            </table>
-        </section>
-
-        <section class="panel">
-            <h2>Split Loot</h2>
-            <button id="splitLootButton">Split Loot</button><br><br>
-            <section id="lootSplitOutput">
-                Total Loot: <span id="totalLoot"></span><br>
-                Loot Per Player: <span id="lootPerPlayer"></span>
-
+                <span id="invalid-party-size-message">Party size must be an integer of at least 1.</span>
+                </div>
             </section>
-            <table id="lootSplitTable">
-            </table>
-        </section>
+        </article>
+
+        <article>
+            <header>
+                <span>Add Loot</span>
+            </header>
+            <section>
+                <form id="lootForm" name="lootForm">
+                    <label for="lootname">Name:</label><br>
+                    <input id="lootname" placeholder="Name of Item"><br>
+                    <br>
+                    <label for="lootvalue">Base Value:</label><br>
+                    <input id="lootvalue" type="number" min="0" step="0.01" value="3.14"><br>
+                    <br>
+                    Quality (aka Rarity; internal value adjustment):<br>
+                    <quality-picker aria-label="Loot quality picker." role="radiogroup">
+                        <label><input type="radio" name="lootquality" id="quality-poor" value="0">Poor</label>
+                        <label><input type="radio" name="lootquality" id="quality-common" value="1" checked>Common</label>
+                        <label><input type="radio" name="lootquality" id="quality-uncommon" value="2">Uncommon</label>
+                        <label><input type="radio" name="lootquality" id="quality-rare" value="3">Rare</label>
+                        <label><input type="radio" name="lootquality" id="quality-epic" value="4">Epic</label>
+                    </quality-picker>
+                    <br><br>
+                </form>
+                <button id="addLootButton" value="addLoot">Add Loot</button>
+            </section>
+        </article>
+
+        <article>
+            <header><span>Loot List</span></header>
+            <section>
+                <h3 id="no-loot-message">No loot to display. Add something using the Add Loot form.</h3>
+                <table class="loot-list-table" id="lootTable">
+                </table>
+            </section>
+        </article>
+
+        <article>
+            <header><span>Split Loot</span></header>
+            <section>
+                <button id="splitLootButton">Split Loot</button><br><br>
+                <section id="lootSplitOutput">
+                    Total Loot: <span id="totalLoot"></span><br>
+                    Loot Per Player: <span id="lootPerPlayer"></span>
+    
+                </section>
+                <table id="lootSplitTable">
+                </table>
+            </section>
+        </article>
 
         <hr>
 
