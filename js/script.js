@@ -1,23 +1,19 @@
 let lootList = []; // Set up the loot list array.
-// let playerCharacterLootDistribution = [];
 
 // Class for creating individual items of loot, and provides a couple of nice features.
 class LootItem {
     constructor(name, value = 0.0, rarity = 1) {
         this.name = name;
+        this.value = value;
 
-        // Do a bit of sanity check. In the event the value isn't a number, default to zero.
-        // If it's a negative number, will do the absolute value instead. No negative value allowed!
-        this.value = Number(Math.abs(value))
-        if (isNaN(this.value)) this.value = 0.0;
-
-        // Same here. Default rarity value to the standard "common".
+        // Default rarity value to the standard "common" just in case an invalid value gets snuck in.
         this.rarity = Number(rarity);
         if (isNaN(this.rarity)) this.rarity = 1;
     }
 
+    // Returns an item's base value modified by an amount congruent with higher "tiers" of rarity/quality.
+    // This "rarity" setup is more inspired by MMORPG quality tiers.
     get rarityValue() {
-        // This "rarity" setup is more inspired by MMORPG quality tiers.
         switch(this.rarity) {
             case 0: return this.value * 0.75; // Poor
             case 1: return this.value; // Common
@@ -60,108 +56,54 @@ class PlayerCharacter {
 
 
 // Returns a new array consisting of elements shuffled from the given array.
-// This does not touch the array passed to it.
+// This does not modify the array passed to it.
 function shuffleArray(arrayToShuffle) {
     // Bail out if the array length is 1 or less. No sense in trying to shuffle a size 1 or 0 array.
     if (arrayToShuffle.length <= 1) return arrayToShuffle;
 
-    let oldArray = arrayToShuffle.slice(); // Duplicate array because we're about to mess with it.
-    let newArray = []; // The new array to push shuffled objects onto;
-    
-    // Bit of a dirty shuffle method, but hey it works.
-    while (oldArray.length > 0) {
-        let randomIndex = Math.floor(Math.random() * oldArray.length);
-        let arrayObject = oldArray[randomIndex]; // Get the object at the random index.
-        newArray.push(arrayObject); // Push that object onto the new array.
-        oldArray.splice(randomIndex, 1); // Removes the object from that index.
+    // Duplicate the array because we're about to mess with it.
+    let shuffled = arrayToShuffle.slice();
+
+    // Fisher-Yates shuffle. This is way more efficient than what I'd originally come up with.
+    // My original algorithm involved getting a random number and splicing the original array.
+    // It worked, but it was quite ugly.
+    for (let i = arrayToShuffle.length - 1; i > 0; i--) {
+        const rand = Math.floor(Math.random() * (i + 1)); // Get a random integer 
+        [shuffled[i], shuffled[rand]] = [shuffled[rand], shuffled[i]]; // Swaps the two objects in place.
     }
 
-    return newArray;
+    return shuffled;
 }
 
 
-// Shuffles the loot and evenly distributes it to the players.
-// This is purely visual. The user can click the button agan for a new distribution.
-function shuffleLoot() {
-    let randomizedLoot = shuffleArray(lootList);
-    let partyNumber = document.getElementById("partyNumber").value;
-    let shuffledPlayers = [];
-    
-    // Creates a number of player character objects for the party size.
-    for (let i = 0; i < partyNumber; i++) {
-        shuffledPlayers.push(new PlayerCharacter(i));
-    }
-    
-    // Keep distributing loot until we run out.
-    while (randomizedLoot.length > 0) {
-        // We want to shuffle the players around for some amount of fairness each time.
-        // Otherwise the topmost player would get the most loot no matter what.
-        shuffledPlayers = shuffleArray(shuffledPlayers);
+// This function looks at how many pieces of loot are available, looks at how many players have been defined,
+// then does a simple division for loot distribution. Of course, if there are more players than loot then
+// some players may not get any (will be a float less than 1.0).
+function splitLoot() {
+    const partyNumber = Number(document.getElementById('partyNumber').value);
 
-        // Loops through each player and gives them a piece of loot.
-        for (playerCharacter of shuffledPlayers) {
-            // If we run out of loot break out from the loop.
-            if (randomizedLoot.length <= 0) break;
-            let randomIndex = Math.floor(Math.random() * randomizedLoot.length);
-            let loot = randomizedLoot[randomIndex];
-            playerCharacter.giveLoot(loot);
-            randomizedLoot.splice(randomIndex, 1);
-        }
-    }
+    document.getElementById('totalLoot').innerText = lootList.length;
+    document.getElementById('lootPerPlayer').innerText = lootList.length / partyNumber;
 
-    updateLootDistribution(shuffledPlayers);
-}
-
-
-function updateLootDistribution(playerArray) {
-    let lootTable = document.getElementById('lootSplitTable');
-    let lootTableElements = "";
-
-    if (playerArray.length <= 0) {
-        lootTable.style.display = "none";
-        lootTable.innerHTML = "";
-        return;
-    }
-
-    lootTableElements += `
-        <tr>
-            <th>Item Name</th>
-            <th>Quality</th>
-            <th>Value</th>
-        </tr>
-    `
-
-    for (player of playerArray) {
-        // Players are not sorted in the table (yet).
-        lootTableElements += `<tr><td class="which-player" colspan="3">Player ${player.playerNumber}</td></tr>
-        `;
-
-        for (loot of player.loot) {
-            lootTableElements += `
-                <tr class="loot-info">
-                    <td>${loot.name}</td>
-                    <td>${loot.rarityName}</td>
-                    <td>${loot.rarityValue.toFixed(2)}</td>
-                </tr>
-            `;
-        }
-    }
-
-    lootTable.innerHTML = lootTableElements;
-    lootTable.style.display = "table";
+    document.getElementById('lootSplitOutput').style.display = "block";
 }
 
 
 // Creates the table rows for the loot list table and unhides it.
-function updateLootTable() {
-    let lootTable = document.getElementById('lootTable');
+function renderLoot() {
+    let lootTable = document.getElementById('lootTable'); // Get a reference to the table in the DOM.
     
-    // When updating the loot table, if the length is zero we just blank it out and hide it.
+    // When updating the loot table, if the length is zero we just blank it out, hide it, and bail.
     if (lootList.length === 0) {
         lootTable.style.display = "none";
         lootTable.innerHTML = "";
+        document.getElementById('no-loot-message').style.display = "block";
         return;
     }
+
+    // We want to total up the base and rarity/quality values for all of the loot.
+    let totalLootBaseValue = 0.0;
+    let totalLootRarityValue = 0.0;
 
     let lootTableElements = `<tr>
                     <th>
@@ -185,55 +127,109 @@ function updateLootTable() {
                     </th>
                 </tr>`;
 
+    // Loop through each loot item in lootList, total up values, and build a new row for it in the loot table.
     for (const [index, item] of lootList.entries()) {
+        totalLootBaseValue += item.value;
+        totalLootRarityValue += item.rarityValue;
         lootTableElements += `
         <tr>
             <td>${item.name}</td>
             <td>${item.rarityName}</td>
-            <td>${item.value}</td>
+            <td>${item.value.toFixed(2)}</td>
             <td>${item.rarityValue.toFixed(2)}</td>
             <td><span class="removeFromLootButton" onClick="removeFromLootTable(${index})">❌</span></td>
         </tr>
         `
     }
 
+    // Now load a new row with the totals.
+    lootTableElements += `
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+        <th></th>
+        <th>Total Loot</th>
+        <th>Total Base Value</th>
+        <th>Total Rarity Value</th>
+    </tr>
+
+    <tr>
+        <td></td>
+        <td>${lootList.length}</td>
+        <td>${totalLootBaseValue.toFixed(2)}</td>
+        <td>${totalLootRarityValue.toFixed(2)}</td>
+    </tr>
+    `
+
+    document.getElementById('no-loot-message').style.display = "none"; // We want to hide the "no loot to display" message.
+
     lootTable.innerHTML = lootTableElements;
     lootTable.style.display = "table";
 }
 
 
+// This adds loot to the lootList global array, using the name, value, and quality/rarity selector.
+// This makes use of a custom class I created to construct the loot object.
 function addLoot() {
-    let lootForm = document.querySelector('#lootForm');
+    let lootForm = document.querySelector('#lootForm'); // Get a reference to the loot form itself.
     let itemName = lootForm.elements['lootname'].value.trim(); // Make sure we trim whitespace from the name.
 
-    if (itemName === "") return; // No adding loot with a blank name.
-    if (!isNaN(Number(itemName))) return; // No adding loot whose name is just numbers.
+    // No adding loot with a blank name or just numbers.
+    if (itemName === "") return;
+    if (!isNaN(Number(itemName))) return;
 
     let itemValue = lootForm.elements['lootvalue'].value;
     let itemRarity = lootForm.elements['lootquality'].value;
+
+    // Do a bit of sanity check. In the event the loot value isn't a number, default to zero.
+    // If it's a negative number, will do the absolute value instead. No negative value allowed!
+    itemValue = Number(Math.abs(itemValue))
+    if (isNaN(this.itemValue)) this.itemValue = 0.0;
     
+    // Construct the new loot item using our custom class using the name, value, and rarity, and push it onto the array.
     let newLoot = new LootItem(itemName, itemValue, itemRarity);
     lootList.push(newLoot);
 
-    updateLootTable();   
+    renderLoot();   
 }
 
 
 function removeFromLootTable(index) {
     if (isNaN(Number(index)) || index === null) return; // Bail out in the event of a bad index value. This shouldn't happen but with JavaScript you never know.
-    lootList.splice(index, 1); // Splices out the index of the loot passed into it.
-    updateLootTable();
+    lootList.splice(index, 1); // Splices out the index of the loot passed into it, therefore removing it from the array.
+    renderLoot();
 }
 
 
-// Tries to handle the user entering text or negative numbers into the input.
+// Handles the user entering text, negative numbers, or floats into the input.
 function checkPartyNumber() {
-    let partyNumber = Number(document.getElementById('partyNumber').value);
-    if (isNaN(partyNumber) || partyNumber === 0) document.getElementById('partyNumber').value = "1";
-    if (partyNumber < 1) document.getElementById('partyNumber').value = Math.abs(partyNumber);
+    const partyNumber = Number(document.getElementById('partyNumber').value);
+    let wasInputValid = true;
+
+    if (partyNumber < 1) {
+        document.getElementById('partyNumber').value = Math.abs(partyNumber);
+        wasInputValid = false;
+    }
+    
+    if (!Number.isInteger(partyNumber)) {
+        document.getElementById('partyNumber').value = Math.round(partyNumber);
+        wasInputValid = false;
+    }
+
+    if (isNaN(partyNumber) || partyNumber === 0) {
+        document.getElementById('partyNumber').value = "1";
+        wasInputValid = false;
+    }
+
+    if (!wasInputValid) {
+        document.getElementById('invalid-party-size-message').style.display = "inline";
+    } else {
+        document.getElementById('invalid-party-size-message').style.display = "none";
+    }
 }
 
 
+// A debug function for quickly adding a random set of loot to the loot table without needing to enter things manually.
+// Also assigns a random value and rarity.
 function debugRandomLoot() {
     const itemNames = ["Pendant", "Ring", "Coin", "Dagger", "Torch", "Rope", "Satchel", "Flask", "Map", "Compass", "Key", "Scroll", "Lantern", "Hammer", "Chisel", "Bowl", "Cup", "Cloak", "Boots", "Gloves", "Belt", "Pouch", "Quill", "Book", "Mirror"]
     let randomNumberOfItems = Math.floor(Math.random() * 5) + 6;
@@ -248,12 +244,12 @@ function debugRandomLoot() {
         lootList.push(newLoot);
     }
 
-    updateLootTable();
+    renderLoot();
 }
 
 
 // Set up the event listeners for the buttons.
 document.getElementById('addLootButton').addEventListener('click', addLoot);
-document.getElementById('splitLootButton').addEventListener('click', shuffleLoot);
+document.getElementById('splitLootButton').addEventListener('click', splitLoot);
 document.getElementById('partyNumber').addEventListener('change', checkPartyNumber);
 document.getElementById('debugRandomLoot').addEventListener('click', debugRandomLoot);
