@@ -24,9 +24,13 @@ main {
 }
 
 
-main hr {
+hr {
     width: 75%;
-    border: 1px solid gray;
+}
+
+
+main > hr {
+    border: 1px solid lightgray;
     grid-column: span 2;
 }
 
@@ -36,10 +40,10 @@ main>section {
     grid-template-rows: 20px 1fr;
     border: 1px solid;
     border-color: white #999 #999 white;
-    
     outline: 1px solid black;
     background-color: #ccc;
     margin: 10px;
+    box-shadow: 3px 3px black;
 }
 
 
@@ -71,6 +75,35 @@ main>section>header>div {
     left: 0;
 }
 
+.party-setup {
+    text-align: center;
+    place-content: center;
+}
+
+#partyNumber {
+    width: 80px;
+}
+
+main>section>header>div:active {
+    background-image: linear-gradient(to bottom right, #444, #bbb);
+    box-shadow: none;
+}
+
+.moss-close-button-down {
+    width: 9px;
+    height: 9px;
+    outline: 1px solid black;
+    outline-offset: -2px;
+    border: 1px solid black;
+    background-image: linear-gradient(to bottom right, #444, #bbb);
+
+    border-left: 2px solid #888;
+    border-top: 2px solid #888;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    margin-right: 2px
+}
+
 
 main>section>header>h2 {
     color: black;
@@ -88,7 +121,7 @@ main>section>div {
     outline: 1px solid black;
     outline-offset: -2px;
     background-color: #ccc;
-    padding: 5px;
+    padding: 15px;
     margin: 0 3px 3px 3px;
 }
 
