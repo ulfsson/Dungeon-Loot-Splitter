@@ -117,18 +117,6 @@ main>section>div {
 }
 
 
-/* quality-picker label {
-    padding: 10px;
-    color: white;
-    cursor: pointer;
-    background: #303030;
-    border-radius: 5px;
-    border: 1px solid black;
-    display: inline-block;
-    margin-top: 3px;
-    user-select: none;
-} */
-
 quality-picker label {
     padding: 10px;
     color: black;
