@@ -89,21 +89,6 @@ main>section>header>div:active {
     box-shadow: none;
 }
 
-.moss-close-button-down {
-    width: 9px;
-    height: 9px;
-    outline: 1px solid black;
-    outline-offset: -2px;
-    border: 1px solid black;
-    background-image: linear-gradient(to bottom right, #444, #bbb);
-
-    border-left: 2px solid #888;
-    border-top: 2px solid #888;
-    border-right: 2px solid white;
-    border-bottom: 2px solid white;
-    margin-right: 2px
-}
-
 
 main>section>header>h2 {
     color: black;
@@ -127,25 +112,45 @@ main>section>div {
 
 
 .loot-list-table {
-    border: 1px solid white;
+    border: 1px dotted black;
+    border-collapse: collapse;
     display: none;
     width: 100%;
 }
 
 
 .loot-list-table th {
-    border-bottom: 1px solid white;
+    border-bottom: 1px dotted black;
+    padding: 5px;
+}
+
+
+.loot-list-table tr:nth-child(even) {
+    background-color: #0002;
 }
 
 
 .loot-list-table td {
     text-align: center;
+    border-bottom: 1px dotted black;
+    padding: 3px;
 }
 
 
 .removeFromLootButton {
-    border: 1px solid white;
-    padding: 3px;
+    border: 1px outset white;
+    background-color: lightgray;
+    padding: 2px;
+    user-select: none;
+    cursor: pointer;
+}
+
+
+.removeFromLootButton:active {
+    border: 1px inset white;
+    background-color: lightgray;
+    padding: 2px;
+    user-select: none;
     cursor: pointer;
 }
 

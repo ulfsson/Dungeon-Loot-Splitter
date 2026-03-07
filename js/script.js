@@ -1,9 +1,16 @@
+// Global references that will be accessed frequently.
+const partyNumberInput = document.getElementById('partyNumber');
+
+// Global variables.
 let lootList = []; // Set up the loot list array.
+let partySize = 1; // Global variable for the party size.
+
 
 // Class for creating individual items of loot, and provides a couple of nice features.
 class LootItem {
-    constructor(name, value = 0.0, rarity = 1) {
+    constructor(name, value = 0.0, quantity = 1, rarity = 1) {
         this.name = name;
+        this.quantity = quantity;
         this.value = value;
 
         // Default rarity value to the standard "common" just in case an invalid value gets snuck in.
@@ -80,12 +87,14 @@ function shuffleArray(arrayToShuffle) {
 // then does a simple division for loot distribution. Of course, if there are more players than loot then
 // some players may not get any (will be a float less than 1.0).
 function splitLoot() {
-    const partyNumber = Number(document.getElementById('partyNumber').value);
-
     document.getElementById('totalLoot').innerText = lootList.length;
-    document.getElementById('lootPerPlayer').innerText = lootList.length / partyNumber;
+    document.getElementById('lootPerPlayer').innerText = lootList.length / partySize;
 
-    document.getElementById('lootSplitOutput').style.display = "block";
+    if (lootList.length === 0) {
+        document.getElementById('lootSplitOutput').style.display = "none";
+    } else {
+        document.getElementById('lootSplitOutput').style.display = "block";
+    }
 }
 
 
@@ -98,6 +107,7 @@ function renderLoot() {
         lootTable.style.display = "none";
         lootTable.innerHTML = "";
         document.getElementById('no-loot-message').style.display = "block";
+        updateUI();
         return;
     }
 
@@ -108,6 +118,10 @@ function renderLoot() {
     let lootTableElements = `<tr>
                     <th>
                         Item Name
+                    </th>
+
+                    <th>
+                        Quantity
                     </th>
 
                     <th>
@@ -134,29 +148,28 @@ function renderLoot() {
         lootTableElements += `
         <tr>
             <td>${item.name}</td>
+            <td>${item.quantity}</td>
             <td>${item.rarityName}</td>
             <td>${item.value.toFixed(2)}</td>
             <td>${item.rarityValue.toFixed(2)}</td>
-            <td><span class="removeFromLootButton" onClick="removeFromLootTable(${index})">❌</span></td>
+            <td><button class="removeFromLootButton" onClick="removeFromLootTable(${index})">❌</button></td>
         </tr>
         `
     }
 
+
+    //<td><span class="removeFromLootButton" onClick="removeFromLootTable(${index})">❌</span></td>
+
     // Now load a new row with the totals.
     lootTableElements += `
-    <tr><td>&nbsp;</td></tr>
+    <tr><td colspan="7">&nbsp;</td></tr>
     <tr>
-        <th></th>
-        <th>Total Loot</th>
-        <th>Total Base Value</th>
-        <th>Total Rarity Value</th>
-    </tr>
-
-    <tr>
-        <td></td>
+        <td><b>Totals:</b></td>
         <td>${lootList.length}</td>
+        <td></td>
         <td>${totalLootBaseValue.toFixed(2)}</td>
         <td>${totalLootRarityValue.toFixed(2)}</td>
+        <td></td>
     </tr>
     `
 
@@ -164,6 +177,8 @@ function renderLoot() {
 
     lootTable.innerHTML = lootTableElements;
     lootTable.style.display = "table";
+
+    updateUI();
 }
 
 
@@ -200,27 +215,32 @@ function removeFromLootTable(index) {
 }
 
 
-// Handles the user entering text, negative numbers, or floats into the input.
-function checkPartyNumber() {
-    const partyNumber = Number(document.getElementById('partyNumber').value);
+// For certain validation where the minimum value must be 1 or greater.
+// Returns an array. First element is validated value, second element is if the passed in value was valid.
+function forcePositiveNonZeroInteger(numberToMakeValid) {
+    const validNumber = Number(numberToMakeValid);
+
+    // If it's not a number or equal to zero, snap to 1.
+    if (isNaN(validNumber) || validNumber === 0 ) return [1, false];
+
+    // No negative values. Sets the input to the absolute value of what was entered.
+    if (validNumber < 0) return [Math.abs(validNumber), false];
+
+    // Is the value entered an integer? If not, truncate it.
+    if (!Number.isInteger(validNumber)) return [Math.trunc(validNumber), false];
+
+    return [validNumber, true];
+}
+
+
+// Validation method for the party size input box. Is called every time the input is updated.
+// Handles the user entering non-numbers, negative numbers, or floats into the input.
+function validatePartySize() {
     let wasInputValid = true;
-
-    if (partyNumber < 1) {
-        document.getElementById('partyNumber').value = Math.abs(partyNumber);
-        wasInputValid = false;
-    }
-    
-    if (!Number.isInteger(partyNumber)) {
-        document.getElementById('partyNumber').value = Math.round(partyNumber);
-        wasInputValid = false;
-    }
-
-    if (isNaN(partyNumber) || partyNumber === 0) {
-        document.getElementById('partyNumber').value = "1";
-        wasInputValid = false;
-    }
+    [partySize, wasInputValid] = forcePositiveNonZeroInteger(partyNumberInput.value);
 
     if (!wasInputValid) {
+        document.getElementById('partyNumber').value = partySize;
         document.getElementById('invalid-party-size-message').style.display = "inline";
     } else {
         document.getElementById('invalid-party-size-message').style.display = "none";
@@ -238,9 +258,10 @@ function debugRandomLoot() {
 
     for (let i = 0; i < randomNumberOfItems; i++) {
         let randomLootName = itemNames[Math.floor(Math.random() * itemNames.length)];
+        let randomQuantity = Math.floor(Math.random() * 5) + 1;
         let randomValue = Number((Math.random() * 10).toFixed(2));
         let randomRarity = Math.floor(Math.random() * 5);
-        let newLoot = new LootItem(randomLootName, randomValue, randomRarity);
+        let newLoot = new LootItem(randomLootName, randomValue, randomQuantity, randomRarity);
         lootList.push(newLoot);
     }
 
@@ -248,8 +269,20 @@ function debugRandomLoot() {
 }
 
 
+function updateUI() {
+    validatePartySize();
+    splitLoot();
+
+    if (lootList.length === 0) {
+        document.getElementById('splitLootButton').setAttribute("disabled", "true");
+    } else {
+        document.getElementById('splitLootButton').removeAttribute("disabled");
+    }
+}
+
+
 // Set up the event listeners for the buttons.
 document.getElementById('addLootButton').addEventListener('click', addLoot);
 document.getElementById('splitLootButton').addEventListener('click', splitLoot);
-document.getElementById('partyNumber').addEventListener('change', checkPartyNumber);
+document.getElementById('partyNumber').addEventListener('change', updateUI);
 document.getElementById('debugRandomLoot').addEventListener('click', debugRandomLoot);

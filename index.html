@@ -23,9 +23,9 @@
             <div class="party-setup">
                 How many are in the party?<br>
                 <br>
-                <input type="number" id="partyNumber" value="1" min="1"><br>
+                <input type="number" id="partyNumber" value="1" min="1" step="1"><br>
                 <br>
-                <span id="invalid-party-size-message">Party size must be an integer of at least 1.</span>
+                <span id="invalid-party-size-message">Party size must be an integer of at least 1.<br>Input has been corrected.</span>
             </div>
         </section>
 
@@ -38,6 +38,9 @@
                 <form id="lootForm" name="lootForm">
                     <label for="lootname">Name:</label><br>
                     <input id="lootname" placeholder="Name of Item"><br>
+                    <br>
+                    <label for="lootquantity">Quantity</label><br>
+                    <input id="lootquantity" type="number" min="1" step="1" value="1"><br>
                     <br>
                     <label for="lootvalue">Base Value:</label><br>
                     <input id="lootvalue" type="number" min="0" step="0.01" value="3.14"><br>
@@ -75,7 +78,7 @@
                 <h2>Split Loot</h2>
             </header>
             <div>
-                <button id="splitLootButton">Split Loot</button><br><br>
+                <button id="splitLootButton" disabled>Split Loot</button><br><br>
                 <div id="lootSplitOutput">
                     Total Loot: <span id="totalLoot"></span><br>
                     Loot Per Player: <span id="lootPerPlayer"></span>
@@ -110,9 +113,9 @@
                     <b><u>Conditional Logic</u></b><br>
                     The only pieces of conditional logic involve some sanity checks to make sure the user isn't entering invalid data into the form fields, such as negative party size, strings in number fields, blank entries, etc.
                 </p>
-                <!-- <hr>
+                <hr>
                 <p>The button below will call a method to instantly load up the loot list table with random pieces of dungeon loot. Number, name, value, and rarity are all randomized. Useful for quickly testing loot splitting features.</p>
-                <button id="debugRandomLoot">[Debug] Random Loot</button> -->
+                <button id="debugRandomLoot">[Debug] Random Loot</button>
             </div>
         </section>
 
