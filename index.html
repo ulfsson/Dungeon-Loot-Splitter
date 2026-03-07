@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Eik Ulfsson">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <title>Dungeon Loot Splitter</title>
 </head>
 
@@ -15,9 +16,9 @@
     </header>
 
     <main>
-        <section aria-label="Party Setup panel">
+        <section aria-label="Party Setup panel" id="partySetupPanel">
             <header>
-                <div><!-- Fake close button decoration --></div>
+                <div id="party-setup-close-button"><!-- Fake close button decoration --></div>
                 <h2>Party Setup</h2>
             </header>
             <div class="party-setup">
@@ -28,6 +29,13 @@
                 <span id="invalid-party-size-message">Party size must be an integer of at least 1.<br>Input has been corrected.</span>
             </div>
         </section>
+
+        <div id="party-setup-close">
+            <figure>
+                <img src="../images/bnuuy.jpg" alt="A bunny playing Jenga.">
+                <figcaption><span>Oops. Now you've done it.</span></figcaption>
+            </figure>
+        </div>
 
         <section aria-label="Add Loot panel">
             <header>
@@ -79,12 +87,42 @@
             </header>
             <div>
                 <button id="splitLootButton" disabled>Split Loot</button><br><br>
-                <div id="lootSplitOutput">
-                    Total Loot: <span id="totalLoot"></span><br>
-                    Loot Per Player: <span id="lootPerPlayer"></span>
+                <table id="lootSplitOutput">
+                    <tr>
+                        <td>
+                            Total Loot:
+                        </td>
+                        <td>
+                            <span id="totalLoot"></span>
+                        </td>
+                    </tr>
 
-                </div>
-                <table id="lootSplitTable">
+                    <tr>
+                        <td>
+                            Loot Per Player:
+                        </td>
+                        <td>
+                            <span id="lootPerPlayer"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Total Value:
+                        </td>
+                        <td>
+                            <span id="lootValueTotal"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Value Split Per Player:
+                        </td>
+                        <td>
+                            <span id="lootValuePerPlayer"></span>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </section>
@@ -114,7 +152,7 @@
                     The only pieces of conditional logic involve some sanity checks to make sure the user isn't entering invalid data into the form fields, such as negative party size, strings in number fields, blank entries, etc.
                 </p>
                 <hr>
-                <p>The button below will call a method to instantly load up the loot list table with random pieces of dungeon loot. Number, name, value, and rarity are all randomized. Useful for quickly testing loot splitting features.</p>
+                <p>The button below will call a method to instantly load up the loot list table with random pieces of dungeon loot. Name, quantity, value, and rarity are all randomized. Useful for quickly testing loot splitting features.</p>
                 <button id="debugRandomLoot">[Debug] Random Loot</button>
             </div>
         </section>

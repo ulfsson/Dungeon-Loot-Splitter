@@ -1,17 +1,20 @@
 // Global references that will be accessed frequently.
 const partyNumberInput = document.getElementById('partyNumber');
+const lootTable = document.getElementById('lootTable');
 
 // Global variables.
 let lootList = []; // Set up the loot list array.
 let partySize = 1; // Global variable for the party size.
+let totalLootPartyValue = 0.0; // For use when splitting value in the party.
+let totalLootQuantity = 0;
 
 
 // Class for creating individual items of loot, and provides a couple of nice features.
 class LootItem {
     constructor(name, value = 0.0, quantity = 1, rarity = 1) {
         this.name = name;
-        this.quantity = quantity;
-        this.value = value;
+        this.quantity = Number(quantity);
+        this.value = Number(value);
 
         // Default rarity value to the standard "common" just in case an invalid value gets snuck in.
         this.rarity = Number(rarity);
@@ -87,8 +90,17 @@ function shuffleArray(arrayToShuffle) {
 // then does a simple division for loot distribution. Of course, if there are more players than loot then
 // some players may not get any (will be a float less than 1.0).
 function splitLoot() {
-    document.getElementById('totalLoot').innerText = lootList.length;
-    document.getElementById('lootPerPlayer').innerText = lootList.length / partySize;
+    // With the way the code logic is written this should NEVER happen, but in the world of
+    // HTML and JavaScript anything is possible, so better safe than sorry. Don't want a divide by zero.
+    // Also, why does JavaScript return Infinity in a 1/0 situation? In proper math It's UNDEFINED.
+    // As you approach zero, it goes toward infinity, but it is NOT actually inifinity!
+    // Furthermore 0/0 results in NaN. JavaScript, why??!!
+    if (partySize < 1) return;
+
+    document.getElementById('totalLoot').innerText = totalLootQuantity;
+    document.getElementById('lootPerPlayer').innerText = (totalLootQuantity / partySize).toFixed(2);
+    document.getElementById('lootValueTotal').innerText = (totalLootPartyValue).toFixed(2);
+    document.getElementById('lootValuePerPlayer').innerText = (totalLootPartyValue / partySize).toFixed(2);
 
     if (lootList.length === 0) {
         document.getElementById('lootSplitOutput').style.display = "none";
@@ -100,8 +112,9 @@ function splitLoot() {
 
 // Creates the table rows for the loot list table and unhides it.
 function renderLoot() {
-    let lootTable = document.getElementById('lootTable'); // Get a reference to the table in the DOM.
-    
+    totalLootPartyValue = 0.0;
+    totalLootQuantity = 0;
+
     // When updating the loot table, if the length is zero we just blank it out, hide it, and bail.
     if (lootList.length === 0) {
         lootTable.style.display = "none";
@@ -111,7 +124,6 @@ function renderLoot() {
         return;
     }
 
-    // We want to total up the base and rarity/quality values for all of the loot.
     let totalLootBaseValue = 0.0;
     let totalLootRarityValue = 0.0;
 
@@ -137,14 +149,20 @@ function renderLoot() {
                     </th>
 
                     <th>
+                        Total Value
+                    </th>
+
+                    <th>
                         Remove
                     </th>
                 </tr>`;
 
     // Loop through each loot item in lootList, total up values, and build a new row for it in the loot table.
     for (const [index, item] of lootList.entries()) {
+        totalLootQuantity += item.quantity;
         totalLootBaseValue += item.value;
         totalLootRarityValue += item.rarityValue;
+        totalLootPartyValue += (item.rarityValue * item.quantity);
         lootTableElements += `
         <tr>
             <td>${item.name}</td>
@@ -152,23 +170,22 @@ function renderLoot() {
             <td>${item.rarityName}</td>
             <td>${item.value.toFixed(2)}</td>
             <td>${item.rarityValue.toFixed(2)}</td>
+            <td>${(item.rarityValue * item.quantity).toFixed(2)}</td>
             <td><button class="removeFromLootButton" onClick="removeFromLootTable(${index})">❌</button></td>
         </tr>
         `
     }
 
-
-    //<td><span class="removeFromLootButton" onClick="removeFromLootTable(${index})">❌</span></td>
-
     // Now load a new row with the totals.
     lootTableElements += `
-    <tr><td colspan="7">&nbsp;</td></tr>
+    <tr><td colspan="9">&nbsp;</td></tr>
     <tr>
         <td><b>Totals:</b></td>
-        <td>${lootList.length}</td>
+        <td>${totalLootQuantity}</td>
         <td></td>
-        <td>${totalLootBaseValue.toFixed(2)}</td>
-        <td>${totalLootRarityValue.toFixed(2)}</td>
+        <td></td>
+        <td></td>
+        <td>${totalLootPartyValue.toFixed(2)}</td>
         <td></td>
     </tr>
     `
@@ -182,29 +199,34 @@ function renderLoot() {
 }
 
 
-// This adds loot to the lootList global array, using the name, value, and quality/rarity selector.
-// This makes use of a custom class I created to construct the loot object.
+// This adds loot to the lootList global array, using the name, quantity, value, and quality/rarity selector.
+// This makes use of a custom class to construct the loot object.
 function addLoot() {
-    let lootForm = document.querySelector('#lootForm'); // Get a reference to the loot form itself.
+    const lootForm = document.querySelector('#lootForm'); // Get a reference to the loot form itself.
     let itemName = lootForm.elements['lootname'].value.trim(); // Make sure we trim whitespace from the name.
-
+    
     // No adding loot with a blank name or just numbers.
     if (itemName === "") return;
     if (!isNaN(Number(itemName))) return;
+    
+    // Quantities less than 1 will default to at least 1.
+    let itemQuantity = Number(lootForm.elements['lootquantity'].value.trim());
+    if (isNaN(itemQuantity) || itemQuantity < 1) itemQuantity = 1;
 
+    // These variables declared later as there's no sense in doing so early if the above checks return.
     let itemValue = lootForm.elements['lootvalue'].value;
     let itemRarity = lootForm.elements['lootquality'].value;
 
     // Do a bit of sanity check. In the event the loot value isn't a number, default to zero.
     // If it's a negative number, will do the absolute value instead. No negative value allowed!
     itemValue = Number(Math.abs(itemValue))
-    if (isNaN(this.itemValue)) this.itemValue = 0.0;
+    if (isNaN(itemValue)) itemValue = 0.0;
     
     // Construct the new loot item using our custom class using the name, value, and rarity, and push it onto the array.
-    let newLoot = new LootItem(itemName, itemValue, itemRarity);
+    let newLoot = new LootItem(itemName, itemValue, itemQuantity, itemRarity);
     lootList.push(newLoot);
 
-    renderLoot();   
+    renderLoot();
 }
 
 
@@ -281,8 +303,15 @@ function updateUI() {
 }
 
 
+function closePartySetup() {
+    document.getElementById('partySetupPanel').style.display = "none";
+    document.getElementById('party-setup-close').style.display = "block";
+}
+
+
 // Set up the event listeners for the buttons.
 document.getElementById('addLootButton').addEventListener('click', addLoot);
-document.getElementById('splitLootButton').addEventListener('click', splitLoot);
+document.getElementById('splitLootButton').addEventListener('click', updateUI);
 document.getElementById('partyNumber').addEventListener('change', updateUI);
 document.getElementById('debugRandomLoot').addEventListener('click', debugRandomLoot);
+document.getElementById('party-setup-close-button').addEventListener('click', closePartySetup);

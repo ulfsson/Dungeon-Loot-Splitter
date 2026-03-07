@@ -120,7 +120,7 @@ main>section>div {
 
 
 .loot-list-table th {
-    border-bottom: 1px dotted black;
+    border: 1px dotted black;
     padding: 5px;
 }
 
@@ -188,10 +188,12 @@ quality-picker label input {
     pointer-events: none;
 }
 
+
 #invalid-party-size-message {
     color: red;
     display: none;
 }
+
 
 #no-loot-message {
     font-size: large;
@@ -201,33 +203,34 @@ quality-picker label input {
     height: 100%;
 }
 
+
 #lootSplitOutput {
     display: none;
-}
-
-#lootSplitTable {
-    border: 1px solid white;
     border-collapse: collapse;
-    display: none;
-    width: 100%;
 }
 
-#lootSplitTable tr {
-    border-bottom: 1px solid white;
-}
 
-#lootSplitTable td.which-player {
-    text-align: left;
-    font-weight: bold;
+#lootSplitOutput td {
+    border: 1px dotted black;
     padding: 5px;
-    padding-left: 20px;
-    background-color: rgb(0, 0, 56);
 }
 
-#lootSplitTable tr.loot-info td {
+#party-setup-close {
+    display: none;
     text-align: center;
 }
 
+#party-setup-close img {
+    border: 1px outset;
+    border-radius: 10px;
+}
+
+#party-setup-close span {
+    background-color: gray;
+    font-weight: bold;
+    padding: 3px;
+    user-select: none;
+}
 
 @media (min-width: 768px) {
     main {
