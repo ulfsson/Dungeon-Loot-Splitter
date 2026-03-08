@@ -18,7 +18,7 @@
     <main>
         <section aria-label="Party Setup panel" id="partySetupPanel">
             <header>
-                <div id="party-setup-close-button"><!-- Fake close button decoration --></div>
+                <div id="party-setup-close-button"><!-- Close button decoration. Go on. Give it a click. --></div>
                 <h2>Party Setup</h2>
             </header>
             <div class="party-setup">
@@ -70,7 +70,7 @@
 
         <section aria-label="Loot List panel">
             <header>
-                <div><!-- Fake close button decoration --></div>
+                <div id="loot-list-close-button" aria-label="Clear All Loot Button"><!-- Close button decoration --></div>
                 <h2>Loot List</h2>
             </header>
             <div>
@@ -152,7 +152,7 @@
                     The only pieces of conditional logic involve some sanity checks to make sure the user isn't entering invalid data into the form fields, such as negative party size, strings in number fields, blank entries, etc.
                 </p>
                 <hr>
-                <p>The button below will call a method to instantly load up the loot list table with random pieces of dungeon loot. Name, quantity, value, and rarity are all randomized. Useful for quickly testing loot splitting features.</p>
+                <p>The button below will call a method to instantly load up the loot list table with random pieces of dungeon loot. Name, quantity, value, and rarity are all randomized. Useful for quickly testing certain features that doesn't involve manually entering items.</p>
                 <button id="debugRandomLoot">[Debug] Random Loot</button>
             </div>
         </section>

@@ -65,27 +65,6 @@ class PlayerCharacter {
 }
 
 
-// Returns a new array consisting of elements shuffled from the given array.
-// This does not modify the array passed to it.
-function shuffleArray(arrayToShuffle) {
-    // Bail out if the array length is 1 or less. No sense in trying to shuffle a size 1 or 0 array.
-    if (arrayToShuffle.length <= 1) return arrayToShuffle;
-
-    // Duplicate the array because we're about to mess with it.
-    let shuffled = arrayToShuffle.slice();
-
-    // Fisher-Yates shuffle. This is way more efficient than what I'd originally come up with.
-    // My original algorithm involved getting a random number and splicing the original array.
-    // It worked, but it was quite ugly.
-    for (let i = arrayToShuffle.length - 1; i > 0; i--) {
-        const rand = Math.floor(Math.random() * (i + 1)); // Get a random integer 
-        [shuffled[i], shuffled[rand]] = [shuffled[rand], shuffled[i]]; // Swaps the two objects in place.
-    }
-
-    return shuffled;
-}
-
-
 // This function looks at how many pieces of loot are available, looks at how many players have been defined,
 // then does a simple division for loot distribution. Of course, if there are more players than loot then
 // some players may not get any (will be a float less than 1.0).
@@ -93,8 +72,8 @@ function splitLoot() {
     // With the way the code logic is written this should NEVER happen, but in the world of
     // HTML and JavaScript anything is possible, so better safe than sorry. Don't want a divide by zero.
     // Also, why does JavaScript return Infinity in a 1/0 situation? In proper math It's UNDEFINED.
-    // As you approach zero, it goes toward infinity, but it is NOT actually inifinity!
-    // Furthermore 0/0 results in NaN. JavaScript, why??!!
+    // As you approach zero, it goes toward infinity, but it is NOT actually infinity!
+    // Furthermore 0/0 results in NaN?? JavaScript, why??!!
     if (partySize < 1) return;
 
     document.getElementById('totalLoot').innerText = totalLootQuantity;
@@ -110,8 +89,12 @@ function splitLoot() {
 }
 
 
-// Creates the table rows for the loot list table and unhides it.
+// Creates the table rows for the loot list table and unhides/hides it based on available data.
+// I realize this is a little ugly and could be accomplished with divs, but I largely wanted to
+// see if I could apply the assignment concepts to my existing table structure. I may refactor
+// this in the next assignment.
 function renderLoot() {
+    lootTable.innerHTML = "";
     totalLootPartyValue = 0.0;
     totalLootQuantity = 0;
 
@@ -124,38 +107,43 @@ function renderLoot() {
         return;
     }
 
+    let lootTableHeader = `
+        <tr>
+            <th>
+                Item Name
+            </th>
+
+            <th>
+                Quantity
+            </th>
+
+            <th>
+                Quality
+            </th>
+            
+            <th>
+                Base Value
+            </th>
+            
+            <th>
+                Quality Value
+            </th>
+
+            <th>
+                Total Value
+            </th>
+
+            <th>
+                Remove
+            </th>
+        </tr>
+        `;
+
+    lootTable.insertAdjacentHTML("afterbegin", lootTableHeader);
+
+    // For adding up the totals in the loop below.
     let totalLootBaseValue = 0.0;
     let totalLootRarityValue = 0.0;
-
-    let lootTableElements = `<tr>
-                    <th>
-                        Item Name
-                    </th>
-
-                    <th>
-                        Quantity
-                    </th>
-
-                    <th>
-                        Quality
-                    </th>
-                    
-                    <th>
-                        Base Value
-                    </th>
-                    
-                    <th>
-                        Quality Value
-                    </th>
-
-                    <th>
-                        Total Value
-                    </th>
-
-                    <th>
-                        Remove
-                    </th>
-                </tr>`;
 
     // Loop through each loot item in lootList, total up values, and build a new row for it in the loot table.
     for (const [index, item] of lootList.entries()) {
@@ -163,23 +151,37 @@ function renderLoot() {
         totalLootBaseValue += item.value;
         totalLootRarityValue += item.rarityValue;
         totalLootPartyValue += (item.rarityValue * item.quantity);
-        lootTableElements += `
-        <tr>
+        let lootTableRow = document.createElement("tr");
+        let lootRowData = `
             <td>${item.name}</td>
             <td>${item.quantity}</td>
             <td>${item.rarityName}</td>
             <td>${item.value.toFixed(2)}</td>
             <td>${item.rarityValue.toFixed(2)}</td>
             <td>${(item.rarityValue * item.quantity).toFixed(2)}</td>
-            <td><button class="removeFromLootButton" onClick="removeFromLootTable(${index})">❌</button></td>
-        </tr>
-        `
+            `
+
+        lootTableRow.innerHTML = lootRowData;
+        
+        // Build the remove button. This used to be a div, but now it's an actual button because why not.
+        let removeCell = document.createElement("td");
+        let removeButton = document.createElement("button");
+        removeButton.innerText = "❌";
+        removeButton.className = "removeFromLootButton";
+        
+        removeCell.appendChild(removeButton);
+        lootTableRow.appendChild(removeCell);
+        lootTable.appendChild(lootTableRow);
+        
+        removeButton.addEventListener("click", function() { removeLoot(index) });
     }
 
-    // Now load a new row with the totals.
-    lootTableElements += `
-    <tr><td colspan="9">&nbsp;</td></tr>
-    <tr>
+    // The spacer line between the last item and the totals line.
+    lootTable.insertAdjacentHTML("beforeend", `<tr><td colspan="9">&nbsp;</td></tr>`);
+
+    // Create the new row that will be the totals line and load it up with data.
+    let lootTotalRow = document.createElement("tr");
+    lootTotalRow.innerHTML = `
         <td><b>Totals:</b></td>
         <td>${totalLootQuantity}</td>
         <td></td>
@@ -187,12 +189,12 @@ function renderLoot() {
         <td></td>
         <td>${totalLootPartyValue.toFixed(2)}</td>
         <td></td>
-    </tr>
-    `
+        `;
 
-    document.getElementById('no-loot-message').style.display = "none"; // We want to hide the "no loot to display" message.
+    lootTable.appendChild(lootTotalRow);
+    
+    document.getElementById('no-loot-message').style.display = "none"; // Hide the "no loot to display" message.
 
-    lootTable.innerHTML = lootTableElements;
     lootTable.style.display = "table";
 
     updateUI();
@@ -230,10 +232,17 @@ function addLoot() {
 }
 
 
-function removeFromLootTable(index) {
+function removeLoot(index) {
     if (isNaN(Number(index)) || index === null) return; // Bail out in the event of a bad index value. This shouldn't happen but with JavaScript you never know.
     lootList.splice(index, 1); // Splices out the index of the loot passed into it, therefore removing it from the array.
     renderLoot();
+}
+
+
+function removeAllLoot() {
+    lootList = [];
+    renderLoot();
+    updateUI();
 }
 
 
@@ -273,7 +282,8 @@ function validatePartySize() {
 // A debug function for quickly adding a random set of loot to the loot table without needing to enter things manually.
 // Also assigns a random value and rarity.
 function debugRandomLoot() {
-    const itemNames = ["Pendant", "Ring", "Coin", "Dagger", "Torch", "Rope", "Satchel", "Flask", "Map", "Compass", "Key", "Scroll", "Lantern", "Hammer", "Chisel", "Bowl", "Cup", "Cloak", "Boots", "Gloves", "Belt", "Pouch", "Quill", "Book", "Mirror"]
+    const itemNames = ["Helmet", "Hood", "Shoulderpads", "Pauldrons", "Cloak", "Shawl", "Shirt", "Chestguard", "Hauberk", "Bracers", "Armguards", "Gloves", "Gauntlets", "Belt", "Sash", "Leggings", "Greaves", "Pantaloons", "Fishnet Stockings", "Shoes", "Sabatons", "Boots", "Hupodema", "Flip-Flops", "Silver Necklace", "Locket", "Pendant", "Ring", "Signet", "Class Ring", "Dagger", "Battleaxe", "Hatchet", "Short Sword", "Longsword", "Rusty Sword", "Empty Scabbard", "Coin", "Torch", "Rope", "Satchel", "Flask", "Map", "Compass", "Key", "Scroll", "Lantern", "Hammer", "Chisel", "Bowl", "Cup", "Pouch", "Quill", "Book", "Mirror", "Packet of Bird Flu", "Jar of Ear Wax", "Jar of Bees", "Beehive", "Stick", "Eugene", "Book of Terrible JavaScript", "Hot Cup of Coffee", "Warm Cup of Coffee", "Cold Cup of Coffee", "Moldy Cup of Coffee", "Fermented Cup of Coffee", "Pringle", "Squirrel", "Itsy Bitsy Teenie Weenie Yellow Polkadot Bikini"]
+    
     let randomNumberOfItems = Math.floor(Math.random() * 5) + 6;
 
     lootList = [];
@@ -303,15 +313,17 @@ function updateUI() {
 }
 
 
+// For some added fun.
 function closePartySetup() {
     document.getElementById('partySetupPanel').style.display = "none";
     document.getElementById('party-setup-close').style.display = "block";
 }
 
 
-// Set up the event listeners for the buttons.
+// Set up the event listeners for the existing buttons on the page.
 document.getElementById('addLootButton').addEventListener('click', addLoot);
 document.getElementById('splitLootButton').addEventListener('click', updateUI);
 document.getElementById('partyNumber').addEventListener('change', updateUI);
 document.getElementById('debugRandomLoot').addEventListener('click', debugRandomLoot);
+document.getElementById('loot-list-close-button').addEventListener("click", removeAllLoot);
 document.getElementById('party-setup-close-button').addEventListener('click', closePartySetup);
