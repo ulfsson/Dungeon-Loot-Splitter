@@ -137,19 +137,23 @@
             <div>
                 <p>
                     <b><u>Array Logic</u></b><br>
-                    The primary array stores objects for the loot that's been added by the form. Those objects are constructed from a custom class that include three separate fields for the name, the value, and the rarity number. The class also provides a couple of features for getting the value and the name of the quality/rarity integer, which is useful when looping through each one of them. I'd planned to include some checks within the class in a future revision, to prevent inputting invalid values upon construction.
+                    The primary array stores objects for the loot that's been added by the form. Those objects are constructed from a custom class that include four separate fields for the name, quantity, the value, and the rarity number. The class also provides a couple of features for getting the value and the name of the quality/rarity integer, which is useful when looping through each one of them. I'd planned to include some checks within the class in a future revision, to prevent inputting invalid values upon construction.<br>
+                    <br>
+                    The quantity was added in the second phase, and itself was just a simple addition to the constructor. I had to also make sure that the loot table accounted for this since the quantity is now used in the value calculation.
                 </p>
                 <hr>
                 
                 <p>
-                    <b><u>Looping Logic</u></b><br>
-                    The only real loop in use is when rendering the loot table inside of the <b>renderLoot()</b> method. Each time a valid piece of loot has been added, the method is called which loops through each object in the loot list array, loads up the appropriate variables, and constructs an HTML template which is then pushed to the loot table. 
+                    <b><u>updateUI() Logic</u></b><br>
+                    This in turn calls two additional functions to calculate the loot split and validation of the party size, and then enables or disables the button for splitting loot. This button isn't necessary anymore, but was left in as part of the assignment requirements.
                 </p>
                 <hr>
 
                 <p>
-                    <b><u>Conditional Logic</u></b><br>
-                    The only pieces of conditional logic involve some sanity checks to make sure the user isn't entering invalid data into the form fields, such as negative party size, strings in number fields, blank entries, etc.
+                    <b><u>Invalid State Logic</u></b><br>
+                    For Party Size and Item Quantity, a function is called that forces the value to be a nonzero positive integer. This also returns a result for displaying appropriate error messages, if desired. For Item Value some simple checks are done just to ensure it's a positive number. The absolute value is taken. If it's not a number then the value defaults to zero.<br>
+                    <br>
+                    There is a handler for invalid party size entries, but with the way the logic is written that handler should never occur. But with how weird JavaScript can be and people possibly fiddling with developer tools in the browser it's better safe than sorry. 
                 </p>
                 <hr>
                 <p>The button below will call a method to instantly load up the loot list table with random pieces of dungeon loot. Name, quantity, value, and rarity are all randomized. Useful for quickly testing certain features that doesn't involve manually entering items.</p>

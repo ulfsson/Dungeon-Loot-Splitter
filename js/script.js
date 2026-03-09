@@ -212,8 +212,8 @@ function addLoot() {
     if (!isNaN(Number(itemName))) return;
     
     // Quantities less than 1 will default to at least 1.
-    let itemQuantity = Number(lootForm.elements['lootquantity'].value.trim());
-    if (isNaN(itemQuantity) || itemQuantity < 1) itemQuantity = 1;
+    let [itemQuantity, wasInputValid] = forcePositiveNonZeroInteger(lootForm.elements['lootquantity'].value);
+    if (!wasInputValid) lootForm.elements['lootquantity'].value = itemQuantity;
 
     // These variables declared later as there's no sense in doing so early if the above checks return.
     let itemValue = lootForm.elements['lootvalue'].value;
@@ -222,7 +222,10 @@ function addLoot() {
     // Do a bit of sanity check. In the event the loot value isn't a number, default to zero.
     // If it's a negative number, will do the absolute value instead. No negative value allowed!
     itemValue = Number(Math.abs(itemValue))
-    if (isNaN(itemValue)) itemValue = 0.0;
+    if (isNaN(itemValue)) {
+        itemValue = 0.0;
+        lootForm.elements['lootvalue'].value = itemValue;
+    }
     
     // Construct the new loot item using our custom class using the name, value, and rarity, and push it onto the array.
     let newLoot = new LootItem(itemName, itemValue, itemQuantity, itemRarity);
@@ -249,7 +252,7 @@ function removeAllLoot() {
 // For certain validation where the minimum value must be 1 or greater.
 // Returns an array. First element is validated value, second element is if the passed in value was valid.
 function forcePositiveNonZeroInteger(numberToMakeValid) {
-    const validNumber = Number(numberToMakeValid);
+    const validNumber = Number(numberToMakeValid.trim());
 
     // If it's not a number or equal to zero, snap to 1.
     if (isNaN(validNumber) || validNumber === 0 ) return [1, false];
